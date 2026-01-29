@@ -1,0 +1,28 @@
+node_modules
+npm-debug.log
+dist
+.git
+.gitignore
+.env
+.env.local
+.env.*.local
+coverage
+.nyc_output
+*.log
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode
+.idea
+*.md
+!README.md
+test
+tests
+*.spec.ts
+*.test.ts
+# Keep entrypoint scripts
+!entrypoint.sh
+!wait-for-postgres.sh
+# Keep frontend directory
+!frontend

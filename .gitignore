@@ -1,0 +1,18 @@
+# Dependencies
+node_modules
+
+# Build and coverage
+dist
+coverage
+
+# Environment (do not commit secrets)
+.env
+.env.local
+.env.*.local
+
+# Logs and OS
+*.log
+.DS_Store
+
+# Optional: keep PDF out of repo if large
+# /PoC Take Home.pdf
