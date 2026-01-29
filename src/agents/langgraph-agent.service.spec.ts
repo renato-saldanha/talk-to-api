@@ -7,6 +7,10 @@ describe("LangGraphAgentService", () => {
   let service: LangGraphAgentService;
   let ragService: RagService;
 
+  beforeAll(() => {
+    process.env.OPENAI_API_KEY = process.env.OPENAI_API_KEY || "sk-fake";
+  });
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
