@@ -5,7 +5,6 @@ import * as fs from "fs";
 import * as path from "path";
 
 describe("Prisma Migrations", () => {
-  let prismaService: PrismaService;
   const originalEnv = process.env;
 
   beforeEach(async () => {
@@ -13,7 +12,7 @@ describe("Prisma Migrations", () => {
       providers: [PrismaService],
     }).compile();
 
-    prismaService = module.get<PrismaService>(PrismaService);
+    void module.get<PrismaService>(PrismaService);
   });
 
   afterAll(() => {
