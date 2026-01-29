@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { HealthController } from './health.controller';
-import { HealthService } from './health.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { HealthController } from "./health.controller";
+import { HealthService } from "./health.service";
 
-describe('HealthController', () => {
+describe("HealthController", () => {
   let controller: HealthController;
   let service: HealthService;
 
@@ -14,9 +14,9 @@ describe('HealthController', () => {
           provide: HealthService,
           useValue: {
             checkHealth: jest.fn().mockResolvedValue({
-              status: 'ok',
-              database: 'connected',
-              pinecone: 'connected',
+              status: "ok",
+              database: "connected",
+              pinecone: "connected",
             }),
           },
         },
@@ -27,17 +27,17 @@ describe('HealthController', () => {
     service = module.get<HealthService>(HealthService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 
-  it('should return health status', async () => {
+  it("should return health status", async () => {
     const result = await controller.check();
 
     expect(result).toEqual({
-      status: 'ok',
-      database: 'connected',
-      pinecone: 'connected',
+      status: "ok",
+      database: "connected",
+      pinecone: "connected",
     });
     expect(service.checkHealth).toHaveBeenCalled();
   });

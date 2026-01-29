@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { HealthService } from './health.service';
-import { PrismaService } from '../core/prisma/prisma.service';
-import { Pinecone } from '@pinecone-database/pinecone';
+import { Test, TestingModule } from "@nestjs/testing";
+import { HealthService } from "./health.service";
+import { PrismaService } from "../core/prisma/prisma.service";
+import { Pinecone } from "@pinecone-database/pinecone";
 
-jest.mock('@pinecone-database/pinecone');
+jest.mock("@pinecone-database/pinecone");
 
-describe('HealthService', () => {
+describe("HealthService", () => {
   let service: HealthService;
   let prismaService: PrismaService;
 
@@ -26,13 +26,15 @@ describe('HealthService', () => {
     prismaService = module.get<PrismaService>(PrismaService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  it('should return ok status when both services are connected', async () => {
-    jest.spyOn(prismaService, '$queryRaw').mockResolvedValue([{ '?column?': 1 }]);
-    
+  it("should return ok status when both services are connected", async () => {
+    jest
+      .spyOn(prismaService, "$queryRaw")
+      .mockResolvedValue([{ "?column?": 1 }]);
+
     const mockIndex = {
       describeIndexStats: jest.fn().mockResolvedValue({ totalRecordCount: 0 }),
     };
@@ -41,61 +43,67 @@ describe('HealthService', () => {
     };
     (Pinecone as jest.Mock).mockImplementation(() => mockPinecone);
 
-    process.env.PINECONE_API_KEY = 'pcsk_test';
-    process.env.PINECONE_INDEX_NAME = 'test-index';
+    process.env.PINECONE_API_KEY = "pcsk_test";
+    process.env.PINECONE_INDEX_NAME = "test-index";
 
     const result = await service.checkHealth();
 
-    expect(result.status).toBe('ok');
-    expect(result.database).toBe('connected');
-    expect(result.pinecone).toBe('connected');
+    expect(result.status).toBe("ok");
+    expect(result.database).toBe("connected");
+    expect(result.pinecone).toBe("connected");
   });
 
-  it('should return error when database is disconnected', async () => {
-    jest.spyOn(prismaService, '$queryRaw').mockRejectedValue(new Error('Connection failed'));
+  it("should return error when database is disconnected", async () => {
+    jest
+      .spyOn(prismaService, "$queryRaw")
+      .mockRejectedValue(new Error("Connection failed"));
 
     const result = await service.checkHealth();
 
-    expect(result.status).toBe('error');
-    expect(result.database).toBe('disconnected');
+    expect(result.status).toBe("error");
+    expect(result.database).toBe("disconnected");
   });
 
-  it('should return error when Pinecone is disconnected', async () => {
-    jest.spyOn(prismaService, '$queryRaw').mockResolvedValue([{ '?column?': 1 }]);
-    
+  it("should return error when Pinecone is disconnected", async () => {
+    jest
+      .spyOn(prismaService, "$queryRaw")
+      .mockResolvedValue([{ "?column?": 1 }]);
+
     const mockPinecone = {
       index: jest.fn().mockImplementation(() => {
-        throw new Error('Pinecone error');
+        throw new Error("Pinecone error");
       }),
     };
     (Pinecone as jest.Mock).mockImplementation(() => mockPinecone);
 
-    process.env.PINECONE_API_KEY = 'pcsk_test';
-    process.env.PINECONE_INDEX_NAME = 'test-index';
+    process.env.PINECONE_API_KEY = "pcsk_test";
+    process.env.PINECONE_INDEX_NAME = "test-index";
 
     const result = await service.checkHealth();
 
-    expect(result.status).toBe('error');
-    expect(result.pinecone).toBe('disconnected');
+    expect(result.status).toBe("error");
+    expect(result.pinecone).toBe("disconnected");
   });
 
-  it('should return error when both database and Pinecone are disconnected', async () => {
-    jest.spyOn(prismaService, '$queryRaw').mockRejectedValue(new Error('Connection failed'));
-    
+  it("should return error when both database and Pinecone are disconnected", async () => {
+    jest
+      .spyOn(prismaService, "$queryRaw")
+      .mockRejectedValue(new Error("Connection failed"));
+
     const mockPinecone = {
       index: jest.fn().mockImplementation(() => {
-        throw new Error('Pinecone error');
+        throw new Error("Pinecone error");
       }),
     };
     (Pinecone as jest.Mock).mockImplementation(() => mockPinecone);
 
-    process.env.PINECONE_API_KEY = 'pcsk_test';
-    process.env.PINECONE_INDEX_NAME = 'test-index';
+    process.env.PINECONE_API_KEY = "pcsk_test";
+    process.env.PINECONE_INDEX_NAME = "test-index";
 
     const result = await service.checkHealth();
 
-    expect(result.status).toBe('error');
-    expect(result.database).toBe('disconnected');
-    expect(result.pinecone).toBe('disconnected');
+    expect(result.status).toBe("error");
+    expect(result.database).toBe("disconnected");
+    expect(result.pinecone).toBe("disconnected");
   });
 });

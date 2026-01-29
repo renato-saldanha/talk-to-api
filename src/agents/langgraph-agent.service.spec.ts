@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { LangGraphAgentService } from './langgraph-agent.service';
-import { RagService } from '../services/rag.service';
-import { FunnelStep } from '@prisma/client';
+import { Test, TestingModule } from "@nestjs/testing";
+import { LangGraphAgentService } from "./langgraph-agent.service";
+import { RagService } from "../services/rag.service";
+import { FunnelStep } from "@prisma/client";
 
-describe('LangGraphAgentService', () => {
+describe("LangGraphAgentService", () => {
   let service: LangGraphAgentService;
   let ragService: RagService;
 
@@ -24,16 +24,16 @@ describe('LangGraphAgentService', () => {
     ragService = module.get<RagService>(RagService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  it('should process message and return state', async () => {
-    jest.spyOn(ragService, 'isQualified').mockResolvedValue(true);
+  it("should process message and return state", async () => {
+    jest.spyOn(ragService, "isQualified").mockResolvedValue(true);
 
     const result = await service.processMessage(
-      '5511999999999',
-      [{ role: 'user', content: 'Hello' }],
+      "5511999999999",
+      [{ role: "user", content: "Hello" }],
       {
         name: null,
         birthDate: null,
@@ -44,7 +44,7 @@ describe('LangGraphAgentService', () => {
     );
 
     expect(result).toBeDefined();
-    expect(result.phoneNumber).toBe('5511999999999');
+    expect(result.phoneNumber).toBe("5511999999999");
     expect(result.messages).toHaveLength(1);
   });
 });

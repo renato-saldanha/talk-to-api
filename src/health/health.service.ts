@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../core/prisma/prisma.service';
-import { Pinecone } from '@pinecone-database/pinecone';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../core/prisma/prisma.service";
+import { Pinecone } from "@pinecone-database/pinecone";
 
 @Injectable()
 export class HealthService {
@@ -8,17 +8,17 @@ export class HealthService {
 
   async checkHealth() {
     const health = {
-      status: 'ok',
-      database: 'disconnected',
-      pinecone: 'disconnected',
+      status: "ok",
+      database: "disconnected",
+      pinecone: "disconnected",
     };
 
     try {
       await this.prisma.$queryRaw`SELECT 1`;
-      health.database = 'connected';
+      health.database = "connected";
     } catch (error) {
-      health.status = 'error';
-      health.database = 'disconnected';
+      health.status = "error";
+      health.database = "disconnected";
     }
 
     try {
@@ -27,10 +27,10 @@ export class HealthService {
       });
       const index = pinecone.index(process.env.PINECONE_INDEX_NAME!);
       await index.describeIndexStats();
-      health.pinecone = 'connected';
+      health.pinecone = "connected";
     } catch (error) {
-      health.status = 'error';
-      health.pinecone = 'disconnected';
+      health.status = "error";
+      health.pinecone = "disconnected";
     }
 
     return health;

@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { ConversationState } from './state/conversation-state';
-import { createFunnelGraph } from './graph/funnel-graph';
-import { RagService } from '../services/rag.service';
-import { FunnelStep } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { ConversationState } from "./state/conversation-state";
+import { createFunnelGraph } from "./graph/funnel-graph";
+import { RagService } from "../services/rag.service";
+import { FunnelStep } from "@prisma/client";
 
 @Injectable()
 export class LangGraphAgentService {
@@ -40,7 +40,8 @@ export class LangGraphAgentService {
       messages: result.messages || messages,
       name: result.name ?? currentState.name ?? null,
       birthDate: result.birthDate ?? currentState.birthDate ?? null,
-      weightLossReason: result.weightLossReason ?? currentState.weightLossReason ?? null,
+      weightLossReason:
+        result.weightLossReason ?? currentState.weightLossReason ?? null,
       qualified: result.qualified ?? currentState.qualified ?? null,
       funnelStep: result.funnelStep || currentState.funnelStep,
       response: result.response,

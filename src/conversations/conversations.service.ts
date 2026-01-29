@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { ConversationService } from '../services/conversation.service';
-import { LangGraphAgentService } from '../agents/langgraph-agent.service';
-import { Status, FunnelStep } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { ConversationService } from "../services/conversation.service";
+import { LangGraphAgentService } from "../agents/langgraph-agent.service";
+import { Status, FunnelStep } from "@prisma/client";
 
 @Injectable()
 export class ConversationsService {
@@ -11,24 +11,23 @@ export class ConversationsService {
   ) {}
 
   async processMessage(phoneNumber: string, content: string) {
-    const conversation = await this.conversationService.findOrCreateConversation(
-      phoneNumber,
-    );
+    const conversation =
+      await this.conversationService.findOrCreateConversation(phoneNumber);
 
     if (conversation.status === Status.expired) {
-      throw new Error('Conversation has expired');
+      throw new Error("Conversation has expired");
     }
 
     if (
       conversation.status === Status.qualified ||
       conversation.status === Status.rejected
     ) {
-      throw new Error('Conversation is already finished');
+      throw new Error("Conversation is already finished");
     }
 
     await this.conversationService.createMessage(
       conversation.id,
-      'user',
+      "user",
       content,
     );
 
@@ -47,7 +46,7 @@ export class ConversationsService {
       {
         name: conversation.name,
         birthDate: conversation.birthDate
-          ? conversation.birthDate.toISOString().split('T')[0]
+          ? conversation.birthDate.toISOString().split("T")[0]
           : null,
         weightLossReason: conversation.weightLossReason,
         qualified: conversation.qualified,
@@ -78,18 +77,17 @@ export class ConversationsService {
     if (agentState.response) {
       await this.conversationService.createMessage(
         conversation.id,
-        'assistant',
+        "assistant",
         agentState.response,
       );
     }
 
-    const updatedConversation = await this.conversationService.findOrCreateConversation(
-      phoneNumber,
-    );
+    const updatedConversation =
+      await this.conversationService.findOrCreateConversation(phoneNumber);
 
     return {
-      type: 'text',
-      content: agentState.response || 'Desculpe, ocorreu um erro.',
+      type: "text",
+      content: agentState.response || "Desculpe, ocorreu um erro.",
       conversation: {
         phoneNumber: updatedConversation.phoneNumber,
         status: updatedConversation.status,
@@ -97,7 +95,7 @@ export class ConversationsService {
         variables: {
           name: updatedConversation.name || undefined,
           birthDate: updatedConversation.birthDate
-            ? updatedConversation.birthDate.toISOString().split('T')[0]
+            ? updatedConversation.birthDate.toISOString().split("T")[0]
             : undefined,
           weightLossReason: updatedConversation.weightLossReason || undefined,
         },

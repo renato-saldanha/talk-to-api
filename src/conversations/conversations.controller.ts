@@ -6,17 +6,17 @@ import {
   Body,
   HttpException,
   HttpStatus,
-} from '@nestjs/common';
-import { ConversationsService } from './conversations.service';
-import { CreateMessageDto } from './dto/create-message.dto';
+} from "@nestjs/common";
+import { ConversationsService } from "./conversations.service";
+import { CreateMessageDto } from "./dto/create-message.dto";
 
-@Controller('conversations')
+@Controller("conversations")
 export class ConversationsController {
   constructor(private readonly conversationsService: ConversationsService) {}
 
-  @Post(':phoneNumber/messages')
+  @Post(":phoneNumber/messages")
   async createMessage(
-    @Param('phoneNumber') phoneNumber: string,
+    @Param("phoneNumber") phoneNumber: string,
     @Body() createMessageDto: CreateMessageDto,
   ) {
     try {
@@ -26,18 +26,18 @@ export class ConversationsController {
       );
     } catch (error) {
       throw new HttpException(
-        error.message || 'Internal server error',
+        error.message || "Internal server error",
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
-  @Get(':phoneNumber/status')
-  async getStatus(@Param('phoneNumber') phoneNumber: string) {
+  @Get(":phoneNumber/status")
+  async getStatus(@Param("phoneNumber") phoneNumber: string) {
     try {
       const status = await this.conversationsService.getStatus(phoneNumber);
       if (!status) {
-        throw new HttpException('Conversation not found', HttpStatus.NOT_FOUND);
+        throw new HttpException("Conversation not found", HttpStatus.NOT_FOUND);
       }
       return status;
     } catch (error) {
@@ -45,7 +45,7 @@ export class ConversationsController {
         throw error;
       }
       throw new HttpException(
-        error.message || 'Internal server error',
+        error.message || "Internal server error",
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

@@ -1,20 +1,20 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { PineconeSeedService } from './pinecone-seed.service';
-import { Pinecone } from '@pinecone-database/pinecone';
-import { OpenAIEmbeddings } from '@langchain/openai';
+import { Test, TestingModule } from "@nestjs/testing";
+import { PineconeSeedService } from "./pinecone-seed.service";
+import { Pinecone } from "@pinecone-database/pinecone";
+import { OpenAIEmbeddings } from "@langchain/openai";
 
-jest.mock('@pinecone-database/pinecone');
-jest.mock('@langchain/openai');
+jest.mock("@pinecone-database/pinecone");
+jest.mock("@langchain/openai");
 
-describe('PineconeSeedService', () => {
+describe("PineconeSeedService", () => {
   let service: PineconeSeedService;
   const originalEnv = process.env;
 
   beforeEach(async () => {
-    process.env.OPENAI_API_KEY = 'sk-test';
-    process.env.PINECONE_API_KEY = 'pcsk_test';
-    process.env.PINECONE_INDEX_NAME = 'test-index';
-    process.env.SKIP_PINECONE_SEED = '0';
+    process.env.OPENAI_API_KEY = "sk-test";
+    process.env.PINECONE_API_KEY = "pcsk_test";
+    process.env.PINECONE_INDEX_NAME = "test-index";
+    process.env.SKIP_PINECONE_SEED = "0";
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [PineconeSeedService],
@@ -27,20 +27,20 @@ describe('PineconeSeedService', () => {
     process.env = originalEnv;
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  it('should skip seed when SKIP_PINECONE_SEED is 1', async () => {
-    process.env.SKIP_PINECONE_SEED = '1';
+  it("should skip seed when SKIP_PINECONE_SEED is 1", async () => {
+    process.env.SKIP_PINECONE_SEED = "1";
 
     await service.seed();
 
     expect(true).toBe(true);
   });
 
-  it('should skip seed when index already has data', async () => {
-    process.env.SKIP_PINECONE_SEED = '0';
+  it("should skip seed when index already has data", async () => {
+    process.env.SKIP_PINECONE_SEED = "0";
 
     const mockIndex = {
       describeIndexStats: jest.fn().mockResolvedValue({
@@ -50,7 +50,7 @@ describe('PineconeSeedService', () => {
     const mockPinecone = {
       index: jest.fn().mockReturnValue(mockIndex),
       listIndexes: jest.fn().mockResolvedValue({
-        indexes: [{ name: 'test-index' }],
+        indexes: [{ name: "test-index" }],
       }),
     };
     (Pinecone as unknown as jest.Mock).mockImplementation(() => mockPinecone);
@@ -61,9 +61,9 @@ describe('PineconeSeedService', () => {
     expect(mockIndex.describeIndexStats).toHaveBeenCalled();
   });
 
-  it('should create index if it does not exist', async () => {
-    process.env.SKIP_PINECONE_SEED = '0';
-    process.env.PINECONE_ENVIRONMENT = 'gcp-starter';
+  it("should create index if it does not exist", async () => {
+    process.env.SKIP_PINECONE_SEED = "0";
+    process.env.PINECONE_ENVIRONMENT = "gcp-starter";
 
     const originalSetTimeout = global.setTimeout;
     global.setTimeout = jest.fn((fn: any) => {
@@ -95,15 +95,15 @@ describe('PineconeSeedService', () => {
 
     expect(mockPinecone.createIndex).toHaveBeenCalled();
     const createCall = (mockPinecone.createIndex as jest.Mock).mock.calls[0][0];
-    expect(createCall.spec?.serverless?.cloud).toBe('gcp');
-    expect(createCall.spec?.serverless?.region).toBe('us-central1');
+    expect(createCall.spec?.serverless?.cloud).toBe("gcp");
+    expect(createCall.spec?.serverless?.region).toBe("us-central1");
 
     global.setTimeout = originalSetTimeout;
   });
 
-  it('should use aws/us-east-1 when PINECONE_ENVIRONMENT is not gcp', async () => {
-    process.env.SKIP_PINECONE_SEED = '0';
-    process.env.PINECONE_ENVIRONMENT = 'aws-us-east-1';
+  it("should use aws/us-east-1 when PINECONE_ENVIRONMENT is not gcp", async () => {
+    process.env.SKIP_PINECONE_SEED = "0";
+    process.env.PINECONE_ENVIRONMENT = "aws-us-east-1";
 
     const originalSetTimeout = global.setTimeout;
     global.setTimeout = jest.fn((fn: any) => {
@@ -129,8 +129,8 @@ describe('PineconeSeedService', () => {
     await newService.seed();
 
     const createCall = (mockPinecone.createIndex as jest.Mock).mock.calls[0][0];
-    expect(createCall.spec?.serverless?.cloud).toBe('aws');
-    expect(createCall.spec?.serverless?.region).toBe('us-east-1');
+    expect(createCall.spec?.serverless?.cloud).toBe("aws");
+    expect(createCall.spec?.serverless?.region).toBe("us-east-1");
 
     global.setTimeout = originalSetTimeout;
   });

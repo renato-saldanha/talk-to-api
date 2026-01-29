@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Pinecone } from '@pinecone-database/pinecone';
-import { OpenAIEmbeddings } from '@langchain/openai';
+import { Injectable, Logger } from "@nestjs/common";
+import { Pinecone } from "@pinecone-database/pinecone";
+import { OpenAIEmbeddings } from "@langchain/openai";
 
 @Injectable()
 export class PineconeSeedService {
@@ -11,11 +11,11 @@ export class PineconeSeedService {
   private environment: string;
 
   private readonly strongReasons = [
-    'Preciso fazer cirurgia e o médico exigiu perder peso',
-    'Minha saúde está em risco, pressão alta e diabetes',
-    'Quero engravidar mas o médico disse que preciso emagrecer',
-    'Tenho dor nas articulações por causa do peso',
-    'Meu colesterol está altíssimo e estou com medo de infarto',
+    "Preciso fazer cirurgia e o médico exigiu perder peso",
+    "Minha saúde está em risco, pressão alta e diabetes",
+    "Quero engravidar mas o médico disse que preciso emagrecer",
+    "Tenho dor nas articulações por causa do peso",
+    "Meu colesterol está altíssimo e estou com medo de infarto",
   ];
 
   constructor() {
@@ -23,20 +23,20 @@ export class PineconeSeedService {
       apiKey: process.env.PINECONE_API_KEY!,
     });
     this.indexName = process.env.PINECONE_INDEX_NAME!;
-    this.environment = process.env.PINECONE_ENVIRONMENT || 'gcp-starter';
+    this.environment = process.env.PINECONE_ENVIRONMENT || "gcp-starter";
     this.embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY!,
-      modelName: process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-3-small',
+      modelName: process.env.OPENAI_EMBEDDING_MODEL || "text-embedding-3-small",
     });
   }
 
   async seed(): Promise<void> {
     try {
-      this.logger.log('Starting Pinecone seed process...');
+      this.logger.log("Starting Pinecone seed process...");
 
-      const skipSeed = process.env.SKIP_PINECONE_SEED === '1';
+      const skipSeed = process.env.SKIP_PINECONE_SEED === "1";
       if (skipSeed) {
-        this.logger.log('Skipping Pinecone seed (SKIP_PINECONE_SEED=1)');
+        this.logger.log("Skipping Pinecone seed (SKIP_PINECONE_SEED=1)");
         return;
       }
 
@@ -52,7 +52,7 @@ export class PineconeSeedService {
         return;
       }
 
-      this.logger.log('Populating index with strong reasons...');
+      this.logger.log("Populating index with strong reasons...");
 
       const vectors = [];
       for (let i = 0; i < this.strongReasons.length; i++) {
@@ -64,7 +64,7 @@ export class PineconeSeedService {
           values: embedding,
           metadata: {
             text: reason,
-            type: 'strong_reason',
+            type: "strong_reason",
             index: i + 1,
           },
         });
@@ -75,17 +75,17 @@ export class PineconeSeedService {
         `Successfully seeded ${this.strongReasons.length} strong reasons`,
       );
     } catch (error) {
-      this.logger.error('Error seeding Pinecone:', error);
+      this.logger.error("Error seeding Pinecone:", error);
       throw error;
     }
   }
 
-  private getServerlessSpec(): { cloud: 'aws' | 'gcp'; region: string } {
-    const env = (this.environment || '').toLowerCase();
-    if (env.startsWith('gcp')) {
-      return { cloud: 'gcp', region: 'us-central1' };
+  private getServerlessSpec(): { cloud: "aws" | "gcp"; region: string } {
+    const env = (this.environment || "").toLowerCase();
+    if (env.startsWith("gcp")) {
+      return { cloud: "gcp", region: "us-central1" };
     }
-    return { cloud: 'aws', region: 'us-east-1' };
+    return { cloud: "aws", region: "us-east-1" };
   }
 
   private async ensureIndexExists(): Promise<void> {
@@ -97,11 +97,13 @@ export class PineconeSeedService {
 
       if (!indexExists) {
         const { cloud, region } = this.getServerlessSpec();
-        this.logger.log(`Creating index: ${this.indexName} (${cloud}/${region})`);
+        this.logger.log(
+          `Creating index: ${this.indexName} (${cloud}/${region})`,
+        );
         await this.pinecone.createIndex({
           name: this.indexName,
           dimension: 1536,
-          metric: 'cosine',
+          metric: "cosine",
           spec: {
             serverless: {
               cloud,
@@ -110,13 +112,13 @@ export class PineconeSeedService {
           },
         });
 
-        this.logger.log('Waiting for index to be ready...');
+        this.logger.log("Waiting for index to be ready...");
         await new Promise((resolve) => setTimeout(resolve, 10000));
       } else {
         this.logger.log(`Index ${this.indexName} already exists`);
       }
     } catch (error) {
-      this.logger.error('Error ensuring index exists:', error);
+      this.logger.error("Error ensuring index exists:", error);
       throw error;
     }
   }

@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../core/prisma/prisma.service';
-import { Status, FunnelStep } from '@prisma/client';
-import { SessionService } from './session.service';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../core/prisma/prisma.service";
+import { Status, FunnelStep } from "@prisma/client";
+import { SessionService } from "./session.service";
 
 @Injectable()
 export class ConversationService {
@@ -25,7 +25,9 @@ export class ConversationService {
         },
       });
     } else {
-      const isExpired = this.sessionService.isExpired(conversation.lastActivity);
+      const isExpired = this.sessionService.isExpired(
+        conversation.lastActivity,
+      );
       if (isExpired && conversation.status === Status.active) {
         conversation = await this.prisma.conversation.update({
           where: { id: conversation.id },
@@ -82,18 +84,14 @@ export class ConversationService {
       variables: {
         name: conversation.name || undefined,
         birthDate: conversation.birthDate
-          ? conversation.birthDate.toISOString().split('T')[0]
+          ? conversation.birthDate.toISOString().split("T")[0]
           : undefined,
         weightLossReason: conversation.weightLossReason || undefined,
       },
     };
   }
 
-  async createMessage(
-    conversationId: string,
-    role: string,
-    content: string,
-  ) {
+  async createMessage(conversationId: string, role: string, content: string) {
     return this.prisma.message.create({
       data: {
         conversationId,
@@ -106,7 +104,7 @@ export class ConversationService {
   async getMessages(conversationId: string) {
     return this.prisma.message.findMany({
       where: { conversationId },
-      orderBy: { timestamp: 'asc' },
+      orderBy: { timestamp: "asc" },
     });
   }
 }

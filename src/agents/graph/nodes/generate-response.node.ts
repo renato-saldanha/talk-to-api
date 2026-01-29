@@ -1,23 +1,23 @@
-import { ConversationState } from '../../state/conversation-state';
-import { FunnelStep } from '@prisma/client';
-import { OpenAI } from '@langchain/openai';
+import { ConversationState } from "../../state/conversation-state";
+import { FunnelStep } from "@prisma/client";
+import { OpenAI } from "@langchain/openai";
 
 export async function generateResponseNode(
   state: ConversationState,
 ): Promise<Partial<ConversationState>> {
   const llm = new OpenAI({
     openAIApiKey: process.env.OPENAI_API_KEY!,
-    modelName: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+    modelName: process.env.OPENAI_MODEL || "gpt-4o-mini",
     temperature: 0.8,
   });
 
   const conversationHistory = state.messages
     .map((m) => `${m.role}: ${m.content}`)
-    .join('\n');
+    .join("\n");
 
-  let prompt = '';
+  let prompt = "";
 
-  const langRule = 'Responda SEMPRE em português do Brasil.';
+  const langRule = "Responda SEMPRE em português do Brasil.";
 
   if (state.funnelStep === FunnelStep.qualified) {
     prompt = `Você é um assistente amigável de uma clínica de saúde. O lead foi qualificado com base no motivo forte para emagrecer.
@@ -55,10 +55,15 @@ Gere uma resposta educada e respeitosa explicando que não é possível atendê-
 
   try {
     const response = await llm.invoke(prompt);
-    const content = typeof response === 'string' ? response : (response as any).content?.toString() || String(response);
+    const content =
+      typeof response === "string"
+        ? response
+        : (response as any).content?.toString() || String(response);
     return { response: content.trim() };
   } catch (error) {
-    console.error('Error generating response:', error);
-    return { response: 'Desculpe, ocorreu um erro. Por favor, tente novamente.' };
+    console.error("Error generating response:", error);
+    return {
+      response: "Desculpe, ocorreu um erro. Por favor, tente novamente.",
+    };
   }
 }

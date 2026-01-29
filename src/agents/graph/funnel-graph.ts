@@ -1,18 +1,18 @@
-import { StateGraph, END, START } from '@langchain/langgraph';
-import { ConversationState } from '../state/conversation-state';
-import { analyzeMessageNode } from './nodes/analyze-message.node';
-import { detectStepNode } from './nodes/detect-step.node';
-import { validateResponseNode } from './nodes/validate-response.node';
-import { queryPineconeNode } from './nodes/query-pinecone.node';
-import { generateResponseNode } from './nodes/generate-response.node';
-import { RagService } from '../../services/rag.service';
+import { StateGraph, END, START } from "@langchain/langgraph";
+import { ConversationState } from "../state/conversation-state";
+import { analyzeMessageNode } from "./nodes/analyze-message.node";
+import { detectStepNode } from "./nodes/detect-step.node";
+import { validateResponseNode } from "./nodes/validate-response.node";
+import { queryPineconeNode } from "./nodes/query-pinecone.node";
+import { generateResponseNode } from "./nodes/generate-response.node";
+import { RagService } from "../../services/rag.service";
 
 export function createFunnelGraph(ragService: RagService) {
   const workflow = new StateGraph<ConversationState>({
     channels: {
       phoneNumber: {
         reducer: (x: string, y: string) => y ?? x,
-        default: () => '',
+        default: () => "",
       },
       messages: {
         reducer: (x: Array<any>, y: Array<any>) => y ?? x,
@@ -36,7 +36,7 @@ export function createFunnelGraph(ragService: RagService) {
       },
       funnelStep: {
         reducer: (x: any, y: any) => y ?? x,
-        default: () => 'collect_name' as any,
+        default: () => "collect_name" as any,
       },
       response: {
         reducer: (x: string | undefined, y: string | undefined) => y ?? x,
@@ -45,47 +45,50 @@ export function createFunnelGraph(ragService: RagService) {
     },
   } as any);
 
-  workflow.addNode('analyze', async (state: ConversationState) => {
+  workflow.addNode("analyze", async (state: ConversationState) => {
     const result = await analyzeMessageNode(state);
     return { ...state, ...result };
   });
 
-  workflow.addNode('detect', (state: ConversationState) => {
+  workflow.addNode("detect", (state: ConversationState) => {
     const result = detectStepNode(state);
     return { ...state, ...result };
   });
 
-  workflow.addNode('validate', (state: ConversationState) => {
+  workflow.addNode("validate", (state: ConversationState) => {
     const result = validateResponseNode(state);
     return { ...state, ...result };
   });
 
-  workflow.addNode('queryPinecone', async (state: ConversationState) => {
+  workflow.addNode("queryPinecone", async (state: ConversationState) => {
     const result = await queryPineconeNode(state, ragService);
     return { ...state, ...result };
   });
 
-  workflow.addNode('generate', async (state: ConversationState) => {
+  workflow.addNode("generate", async (state: ConversationState) => {
     const result = await generateResponseNode(state);
     return { ...state, ...result };
   });
 
-  (workflow as any).addEdge(START, 'analyze');
-  (workflow as any).addEdge('analyze', 'detect');
-  (workflow as any).addEdge('detect', 'validate');
+  (workflow as any).addEdge(START, "analyze");
+  (workflow as any).addEdge("analyze", "detect");
+  (workflow as any).addEdge("detect", "validate");
 
-  (workflow as any).addConditionalEdges('validate', (state: ConversationState) => {
-    if (
-      state.funnelStep === 'collect_weight_loss_reason' &&
-      state.weightLossReason
-    ) {
-      return 'queryPinecone';
-    }
-    return 'generate';
-  });
+  (workflow as any).addConditionalEdges(
+    "validate",
+    (state: ConversationState) => {
+      if (
+        state.funnelStep === "collect_weight_loss_reason" &&
+        state.weightLossReason
+      ) {
+        return "queryPinecone";
+      }
+      return "generate";
+    },
+  );
 
-  (workflow as any).addEdge('queryPinecone', 'detect');
-  (workflow as any).addEdge('generate', END);
+  (workflow as any).addEdge("queryPinecone", "detect");
+  (workflow as any).addEdge("generate", END);
 
   return (workflow as any).compile();
 }

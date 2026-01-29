@@ -1,12 +1,12 @@
-import { ConversationState } from '../../state/conversation-state';
-import { OpenAI } from '@langchain/openai';
+import { ConversationState } from "../../state/conversation-state";
+import { OpenAI } from "@langchain/openai";
 
 export async function analyzeMessageNode(
   state: ConversationState,
 ): Promise<Partial<ConversationState>> {
   const llm = new OpenAI({
     openAIApiKey: process.env.OPENAI_API_KEY!,
-    modelName: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+    modelName: process.env.OPENAI_MODEL || "gpt-4o-mini",
     temperature: 0.7,
   });
 
@@ -21,12 +21,12 @@ Contexto da conversa:
 ${state.messages
   .slice(0, -1)
   .map((m) => `${m.role}: ${m.content}`)
-  .join('\n')}
+  .join("\n")}
 
 Estado atual:
-- Nome: ${state.name || 'não coletado'}
-- Data de nascimento: ${state.birthDate || 'não coletado'}
-- Motivo para emagrecer: ${state.weightLossReason || 'não coletado'}
+- Nome: ${state.name || "não coletado"}
+- Data de nascimento: ${state.birthDate || "não coletado"}
+- Motivo para emagrecer: ${state.weightLossReason || "não coletado"}
 - Etapa do funil: ${state.funnelStep}
 
 Retorne APENAS um objeto JSON com as chaves exatas:
@@ -38,9 +38,12 @@ Retorne SOMENTE JSON válido, sem outro texto.`;
 
   try {
     const response = await llm.invoke(prompt);
-    const content = typeof response === 'string' ? response : (response as any).content?.toString() || String(response);
+    const content =
+      typeof response === "string"
+        ? response
+        : (response as any).content?.toString() || String(response);
     const jsonMatch = content.match(/\{[\s\S]*\}/);
-    
+
     if (jsonMatch) {
       const extracted = JSON.parse(jsonMatch[0]);
       return {
@@ -50,7 +53,7 @@ Retorne SOMENTE JSON válido, sem outro texto.`;
       };
     }
   } catch (error) {
-    console.error('Error analyzing message:', error);
+    console.error("Error analyzing message:", error);
   }
 
   return {};

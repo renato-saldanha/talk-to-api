@@ -1,4 +1,4 @@
-import { FunnelStep } from '@prisma/client';
+import { FunnelStep } from "@prisma/client";
 
 export interface ConversationState {
   phoneNumber: string;

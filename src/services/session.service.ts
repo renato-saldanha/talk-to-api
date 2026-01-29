@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class SessionService {
@@ -6,7 +6,7 @@ export class SessionService {
 
   constructor() {
     this.expiryMinutes = parseInt(
-      process.env.SESSION_EXPIRY_MINUTES || '15',
+      process.env.SESSION_EXPIRY_MINUTES || "15",
       10,
     );
   }

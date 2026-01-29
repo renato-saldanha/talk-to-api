@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from './prisma.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { PrismaService } from "./prisma.service";
 
-describe('PrismaService', () => {
+describe("PrismaService", () => {
   let service: PrismaService;
 
   beforeEach(async () => {
@@ -12,20 +12,20 @@ describe('PrismaService', () => {
     service = module.get<PrismaService>(PrismaService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  it('should connect on module init', async () => {
-    jest.spyOn(service, '$connect').mockResolvedValue(undefined);
+  it("should connect on module init", async () => {
+    jest.spyOn(service, "$connect").mockResolvedValue(undefined);
 
     await service.onModuleInit();
 
     expect(service.$connect).toHaveBeenCalled();
   });
 
-  it('should disconnect on module destroy', async () => {
-    jest.spyOn(service, '$disconnect').mockResolvedValue(undefined);
+  it("should disconnect on module destroy", async () => {
+    jest.spyOn(service, "$disconnect").mockResolvedValue(undefined);
 
     await service.onModuleDestroy();
 

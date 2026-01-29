@@ -1,5 +1,5 @@
-import { ConversationState } from '../../state/conversation-state';
-import { FunnelStep } from '@prisma/client';
+import { ConversationState } from "../../state/conversation-state";
+import { FunnelStep } from "@prisma/client";
 
 export function validateResponseNode(
   state: ConversationState,

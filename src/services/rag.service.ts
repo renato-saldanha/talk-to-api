@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { Pinecone } from '@pinecone-database/pinecone';
-import { OpenAIEmbeddings } from '@langchain/openai';
+import { Injectable } from "@nestjs/common";
+import { Pinecone } from "@pinecone-database/pinecone";
+import { OpenAIEmbeddings } from "@langchain/openai";
 
 @Injectable()
 export class RagService {
@@ -15,11 +15,11 @@ export class RagService {
     });
     this.indexName = process.env.PINECONE_INDEX_NAME!;
     this.threshold = parseFloat(
-      process.env.RAG_QUALIFIED_SCORE_THRESHOLD || '0.75',
+      process.env.RAG_QUALIFIED_SCORE_THRESHOLD || "0.75",
     );
     this.embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY!,
-      modelName: process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-3-small',
+      modelName: process.env.OPENAI_EMBEDDING_MODEL || "text-embedding-3-small",
     });
   }
 
@@ -40,7 +40,7 @@ export class RagService {
 
       return 0;
     } catch (error) {
-      console.error('Error querying Pinecone:', error);
+      console.error("Error querying Pinecone:", error);
       return 0;
     }
   }
