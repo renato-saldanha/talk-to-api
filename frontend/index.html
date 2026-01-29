@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp API - Test Interface</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💬 WhatsApp API - Test Interface</h1>
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-badge" id="statusBadge">Desconectado</span>
+            </div>
+        </div>
+
+        <div class="config-panel">
+            <div class="input-group">
+                <label for="phoneNumber">Número de Telefone:</label>
+                <input type="text" id="phoneNumber" placeholder="5511999999999" value="5511999999999">
+            </div>
+            <div class="input-group">
+                <label for="apiUrl">API URL:</label>
+                <input type="text" id="apiUrl" placeholder="http://localhost:8000" value="http://localhost:8000">
+            </div>
+            <button id="checkStatusBtn" class="btn btn-secondary">Verificar Status</button>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message system">
+                    <p>Bem-vindo! Digite uma mensagem para começar a conversa.</p>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <textarea id="messageInput" placeholder="Digite sua mensagem..." rows="2"></textarea>
+                <button id="sendBtn" class="btn btn-primary">Enviar</button>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3>Informações da Conversa</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Status:</label>
+                    <span id="conversationStatus">-</span>
+                </div>
+                <div class="info-item">
+                    <label>Etapa do Funil:</label>
+                    <span id="funnelStep">-</span>
+                </div>
+                <div class="info-item">
+                    <label>Nome:</label>
+                    <span id="conversationName">-</span>
+                </div>
+                <div class="info-item">
+                    <label>Data de Nascimento:</label>
+                    <span id="conversationBirthDate">-</span>
+                </div>
+                <div class="info-item">
+                    <label>Motivo:</label>
+                    <span id="conversationReason">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
